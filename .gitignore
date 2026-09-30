@@ -141,3 +141,13 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# macOS
+.DS_Store
+
+# Editors
+.vscode/
+.idea/
+
+# Old TypeScript output folder
+build/
