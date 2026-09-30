@@ -1,7 +1,9 @@
+import "reflect-metadata"; 
 import express, { Request, Response, NextFunction } from 'express';
 import { json } from 'body-parser';
 // src/server.ts
 import { authenticate, authorize } from './middleware/auth';
+import { AppDataSource } from './config/database';
 
 
 interface User {
@@ -13,6 +15,14 @@ interface User {
 // Initialize Express app
 const app = express();
 const PORT = process.env.PORT || 3000;
+AppDataSource.initialize()
+  .then(() => {
+   app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+  })
+  .catch((err) => {
+   console.error('DB init error', err);
+   process.exit(1);
+  });
 
 // Middleware
 app.use(json());
@@ -62,10 +72,5 @@ app.get('/api/admin', authenticate, authorize(['admin']), (req: Request, res: Re
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error(err.stack);
   res.status(500).json({ message: 'Something went wrong!' });
-});
-
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
 });
 
